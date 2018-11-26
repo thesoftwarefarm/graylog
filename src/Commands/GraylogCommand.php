@@ -38,8 +38,15 @@ class GraylogCommand extends Command
      */
     public function handle()
     {
+        $start_time = time();
+
         while (true)
         {
+            if(time() - $start_time > 86400)
+            {
+                exit();
+            }
+
             $messages = $this->fetchPendingMessages();
 
             if ( ! $messages->count())
