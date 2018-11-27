@@ -41,5 +41,17 @@ return [
     */
 
     'ip' => env('GRAYLOG_IP', null),
-    'port' => env('GRAYLOG_PORT', null)
+    'port' => env('GRAYLOG_PORT', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Max retries
+    |--------------------------------------------------------------------------
+    |
+    | Configure here the max number of attempts in case of a failure when
+    | pushing to graylog server.
+    |
+    */
+
+    'max_retries' => 10,
 ];

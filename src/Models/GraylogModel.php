@@ -2,6 +2,7 @@
 
 namespace TsfCorp\Graylog\Models;
 
+use Carbon\Carbon;
 use Exception;
 use Gelf\Message;
 use Illuminate\Database\Eloquent\Model;
@@ -62,12 +63,33 @@ class GraylogModel extends Model
 
     /**
      * Dispatches a job for current record
+     * @param \Carbon\Carbon|null $delay
      */
-    public function dispatchJob()
+    public function dispatchJob(Carbon $delay = null)
     {
         $this->status = 'queued';
         $this->save();
 
-        dispatch(new GraylogJob($this->id));
+        $job = new GraylogJob($this->id);
+
+        if ($delay)
+        {
+            $job->delay($delay);
+        }
+
+        dispatch($job);
+    }
+
+    /**
+     * Retry a message which failed being pushed to graylog
+     */
+    public function retry()
+    {
+        $this->retries++;
+        $this->save();
+
+        $delay = Carbon::now()->addMinutes(5);
+
+        $this->dispatchJob($delay);
     }
 }

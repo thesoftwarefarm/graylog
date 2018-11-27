@@ -61,11 +61,30 @@ class GraylogJob implements ShouldQueue
      */
     public function send(Publisher $publisher)
     {
+        if($this->message->retries >= config('graylog.max_retries'))
+        {
+            $this->message->status = 'failed';
+            $this->message->notes = 'Max retry limit reached.';
+            $this->message->save();
+
+            return false;
+        }
+
         try
         {
-            // prepare Gelf message
             $message = $this->message->toGelfMessage();
+        }
+        catch (Throwable $t)
+        {
+            $this->message->status = 'failed';
+            $this->message->notes = $t->getMessage();
+            $this->message->save();
 
+            return false;
+        }
+
+        try
+        {
             // send to Graylog server
             $publisher->publish($message);
 
@@ -74,6 +93,12 @@ class GraylogJob implements ShouldQueue
         }
         catch (Throwable $t)
         {
+            $this->message->status = 'failed';
+            $this->message->notes = $t->getMessage();
+            $this->message->save();
+
+            $this->message->retry();
+
             return false;
         }
 
