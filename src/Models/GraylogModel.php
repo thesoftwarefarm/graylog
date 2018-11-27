@@ -13,11 +13,11 @@ class GraylogModel extends Model
     protected $table = 'graylog';
 
     /**
-     * @return \Illuminate\Config\Repository|mixed|string
+     * @return \Illuminate\Database\Connection
      */
-    public function getConnectionName()
+    public function getConnection()
     {
-        return config('graylog.database_connection');
+        return parent::resolveConnection(config('graylog.database_connection'));
     }
 
     /**

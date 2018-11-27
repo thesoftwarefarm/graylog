@@ -44,12 +44,12 @@ class InstallCommand extends Command
         }
 
         $this->comment('Publishing graylog config file...');
-        $this->callSilent('vendor:publish', ['--tag' => 'graylog-config']);
+        $this->callSilent('vendor:publish', ['--tag' => ['graylog-config']]);
 
         if ($this->confirm('Do you wish to publish migration file?'))
         {
             $this->comment('Publishing graylog migration file...');
-            $this->callSilent('vendor:publish', ['--tag' => 'graylog-migrations']);
+            $this->callSilent('vendor:publish', ['--tag' => ['graylog-migrations']]);
         }
 
         $this->info('Graylog was installed successfully.');

@@ -38,6 +38,14 @@ class GraylogServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Added for L.5.1 compatibility
+     */
+    public function register()
+    {
+
+    }
+
     public function provides()
     {
         return ['graylog'];
