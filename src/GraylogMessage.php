@@ -3,6 +3,7 @@
 namespace TsfCorp\Graylog;
 
 use Exception;
+use Throwable;
 use TsfCorp\Graylog\Jobs\GraylogJob;
 use TsfCorp\Graylog\Models\GraylogModel;
 
@@ -197,6 +198,20 @@ class GraylogMessage
         }
 
         return $additionals;
+    }
+
+    /**
+     * @param \Throwable $throwable
+     * @return string
+     */
+    public static function fullMessageFromThrowable(Throwable $throwable)
+    {
+        return sprintf("%s: %s in %s:%s\nStack trace:\n%s",
+            get_class($throwable),
+            $throwable->getMessage(),
+            $throwable->getFile(),
+            $throwable->getLine(),
+            $throwable->getTraceAsString());
     }
 
     /**
