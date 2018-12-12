@@ -94,4 +94,20 @@ class GraylogMessageJobTest extends TestCase
         // if message was successfully sent to graylog, then the record should be deleted
         $this->assertNull(GraylogModel::find($message->getModel()->id));
     }
+
+    public function test_message_is_not_pushed_to_graylog_in_non_production_environment()
+    {
+        $this->app['config']->set('app.env', 'local');
+
+        $message = (new GraylogMessage)->enqueue();
+        $job = new GraylogJob($message->getModel()->id);
+
+        $publisher = Mockery::mock(Publisher::class);
+
+        $job->send($publisher);
+
+        $model = $message->getModel()->fresh();
+        $this->assertEquals('failed', $model->status);
+        $this->assertEquals('Pushing to graylog is disabled in non production environment.', $model->notes);
+    }
 }

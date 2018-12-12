@@ -61,6 +61,15 @@ class GraylogJob implements ShouldQueue
      */
     public function send(Publisher $publisher)
     {
+        if(config('app.env') != 'production')
+        {
+            $this->message->status = 'failed';
+            $this->message->notes = 'Pushing to graylog is disabled in non production environment.';
+            $this->message->save();
+
+            return false;
+        }
+
         if($this->message->retries >= config('graylog.max_retries'))
         {
             $this->message->status = 'failed';
