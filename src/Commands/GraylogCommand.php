@@ -57,6 +57,8 @@ class GraylogCommand extends Command
             /** @var GraylogModel $message */
             foreach($messages as $message)
             {
+                $this->info("Dispatching job for graylog message id: {$message->id}");
+
                 $message->dispatchJob();
             }
         }
