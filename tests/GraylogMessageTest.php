@@ -23,13 +23,13 @@ class GraylogMessageTest extends TestCase
             ])
             ->enqueue();
 
-        $this->assertEquals(config('graylog.host'), $message->getModel()->host);
+        $this->assertEquals(config('graylog.project'), $message->getModel()->project);
         $this->assertNotEmpty($message->getModel()->payload);
         $this->assertEquals('pending', $message->getModel()->status);
 
         $payload = json_decode($message->getModel()->payload);
 
-        $this->assertEquals(config('graylog.host'), $payload->host);
+        $this->assertEquals(config('graylog.project'), $payload->project);
         $this->assertEquals('Short message.', $payload->short_message);
         $this->assertEquals('Full message.', $payload->full_message);
         $this->assertEquals(GraylogMessage::ERROR, $payload->level);
@@ -67,7 +67,7 @@ class GraylogMessageTest extends TestCase
 
         $gelf_message = $message->getModel()->toGelfMessage();
 
-        $this->assertEquals(config('graylog.host'), $gelf_message->getHost());
+        $this->assertEquals(config('graylog.project'), $gelf_message->getHost());
         $this->assertEquals(LogLevel::ERROR, $gelf_message->getLevel());
         $this->assertEquals('Short message.', $gelf_message->getShortMessage());
         $this->assertEquals('Full message.', $gelf_message->getFullMessage());

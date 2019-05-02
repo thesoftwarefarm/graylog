@@ -35,8 +35,8 @@ class GraylogModel extends Model
 
         $message = new Message();
 
-        if(isset($payload['host']))
-            $message->setHost($payload['host']);
+        if(isset($payload['project']))
+            $message->setHost($payload['project']);
 
         // Graylog requires a short message
         $message->setShortMessage(empty($payload['short_message']) ? 'No short message set.' : $payload['short_message']);

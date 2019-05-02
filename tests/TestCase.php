@@ -32,7 +32,7 @@ class TestCase extends Orchestra
             'prefix'   => '',
         ]);
 
-        $app['config']->set('graylog.host', 'my_project');
+        $app['config']->set('graylog.project', 'my_project');
         $app['config']->set('graylog.database_connection', 'sqlite');
         $app['config']->set('graylog.max_retries', 5);
     }

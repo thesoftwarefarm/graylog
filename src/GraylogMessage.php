@@ -12,7 +12,7 @@ class GraylogMessage
     /**
      * @var string
      */
-    private $host;
+    private $project;
     /**
      * @var string
      */
@@ -63,7 +63,7 @@ class GraylogMessage
      */
     public function __construct()
     {
-        $this->host = config('graylog.host');
+        $this->project = config('graylog.project');
         $this->timestamp = microtime(true);
         $this->level = self::ALERT;
         $this->subsystem = 'GENERIC';
@@ -152,7 +152,7 @@ class GraylogMessage
     private function toArray()
     {
         $message = [
-            'host' => $this->host,
+            'project' => $this->project,
             'short_message' => $this->short_message,
             'full_message' => $this->full_message,
             'timestamp' => $this->timestamp,
@@ -222,7 +222,7 @@ class GraylogMessage
     public function enqueue()
     {
         $this->model = new GraylogModel;
-        $this->model->host = config('graylog.host');
+        $this->model->project = config('graylog.project');
         $this->model->payload = json_encode($this->toArray());
         $this->model->status = 'pending';
         $this->model->save();
