@@ -11,6 +11,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Throwable;
+use TsfCorp\Graylog\Events\GraylogMessageFailedSending;
+use TsfCorp\Graylog\Events\GraylogMessageSent;
 use TsfCorp\Graylog\Models\GraylogModel;
 
 class GraylogJob implements ShouldQueue
@@ -89,6 +91,8 @@ class GraylogJob implements ShouldQueue
             $this->message->notes = $t->getMessage();
             $this->message->save();
 
+            event(new GraylogMessageFailedSending($this->message, $t));
+
             return false;
         }
 
@@ -96,6 +100,8 @@ class GraylogJob implements ShouldQueue
         {
             // send to Graylog server
             $publisher->publish($message);
+
+            event(new GraylogMessageSent($this->message));
 
             // delete the record
             $this->message->delete();
@@ -107,6 +113,8 @@ class GraylogJob implements ShouldQueue
             $this->message->save();
 
             $this->message->retry();
+
+            event(new GraylogMessageFailedSending($this->message, $t));
 
             return false;
         }

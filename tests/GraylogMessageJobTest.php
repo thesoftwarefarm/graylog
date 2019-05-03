@@ -5,6 +5,8 @@ namespace TsfCorp\Graylog\Tests;
 use Exception;
 use Gelf\Publisher;
 use Mockery;
+use TsfCorp\Graylog\Events\GraylogMessageFailedSending;
+use TsfCorp\Graylog\Events\GraylogMessageSent;
 use TsfCorp\Graylog\GraylogMessage;
 use TsfCorp\Graylog\Jobs\GraylogJob;
 use TsfCorp\Graylog\Models\GraylogModel;
@@ -49,6 +51,8 @@ class GraylogMessageJobTest extends TestCase
 
         $publisher = Mockery::mock(Publisher::class);
 
+        $this->expectsEvents(GraylogMessageFailedSending::class);
+
         $this->assertFalse($job->send($publisher));
 
         // message should not be deleted
@@ -67,6 +71,8 @@ class GraylogMessageJobTest extends TestCase
 
         $publisher = Mockery::mock(Publisher::class);
         $publisher->shouldReceive('publish')->andThrow(Exception::class, 'Some exception');
+
+        $this->expectsEvents(GraylogMessageFailedSending::class);
 
         // another job should be dispatched
         $this->expectsJobs(GraylogJob::class);
@@ -88,6 +94,8 @@ class GraylogMessageJobTest extends TestCase
 
         $publisher = Mockery::mock(Publisher::class);
         $publisher->shouldReceive('publish');
+
+        $this->expectsEvents(GraylogMessageSent::class);
 
         $this->assertTrue($job->send($publisher));
 
